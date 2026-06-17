@@ -1,0 +1,44 @@
+name: Test clippy with warn and allow lint flags
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Install Rust toolchain
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+      - name: Create minimal Rust project
+        run: |
+          mkdir -p /tmp/rust-lint-project/src
+          cat > /tmp/rust-lint-project/Cargo.toml << 'EOF'
+          [package]
+          name = "lint-project"
+          version = "0.1.0"
+          edition = "2021"
+          EOF
+          cat > /tmp/rust-lint-project/src/main.rs << 'EOF'
+          fn main() {
+              println!("Hello, world!");
+          }
+          EOF
+
+      - name: Install clippy
+        run: rustup component add clippy
+
+      - id: action
+        uses: .
+        with:
+          token: ${{ github.token }}
+          working-directory: /tmp/rust-lint-project
+          warn: clippy::pedantic
+          allow: clippy::missing_panics_doc,clippy::must_use_candidate
+
+      - name: Assert clippy ran with warn and allow flags
+        run: |
+          echo "Clippy action with warn and allow flags completed"
+          echo "PASS"

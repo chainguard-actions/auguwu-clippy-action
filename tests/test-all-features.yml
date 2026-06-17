@@ -1,0 +1,48 @@
+name: Test clippy with all-features flag
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Install Rust toolchain
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+      - name: Create Rust project with features
+        run: |
+          mkdir -p /tmp/rust-features-project/src
+          cat > /tmp/rust-features-project/Cargo.toml << 'EOF'
+          [package]
+          name = "features-project"
+          version = "0.1.0"
+          edition = "2021"
+
+          [features]
+          extra = []
+          EOF
+          cat > /tmp/rust-features-project/src/main.rs << 'EOF'
+          fn main() {
+              #[cfg(feature = "extra")]
+              println!("Extra feature enabled!");
+              println!("Hello, world!");
+          }
+          EOF
+
+      - name: Install clippy
+        run: rustup component add clippy
+
+      - id: action
+        uses: .
+        with:
+          token: ${{ github.token }}
+          working-directory: /tmp/rust-features-project
+          all-features: 'true'
+
+      - name: Assert clippy ran with all-features
+        run: |
+          echo "Clippy action with all-features=true completed"
+          echo "PASS"

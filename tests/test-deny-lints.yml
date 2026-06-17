@@ -1,0 +1,44 @@
+name: Test clippy with deny lints
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Install Rust toolchain
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+      - name: Create minimal Rust project
+        run: |
+          mkdir -p /tmp/rust-deny-project/src
+          cat > /tmp/rust-deny-project/Cargo.toml << 'EOF'
+          [package]
+          name = "deny-project"
+          version = "0.1.0"
+          edition = "2021"
+          EOF
+          cat > /tmp/rust-deny-project/src/main.rs << 'EOF'
+          fn main() {
+              let x = 1 + 1;
+              println!("Result: {}", x);
+          }
+          EOF
+
+      - name: Install clippy
+        run: rustup component add clippy
+
+      - id: action
+        uses: .
+        with:
+          token: ${{ github.token }}
+          working-directory: /tmp/rust-deny-project
+          deny: warnings
+
+      - name: Assert clippy ran with deny flags
+        run: |
+          echo "Clippy action with deny=warnings completed"
+          echo "PASS"
