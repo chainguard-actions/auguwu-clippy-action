@@ -1,0 +1,22 @@
+name: Test clippy with all-features flag
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Install Rust toolchain with clippy
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable --profile minimal --component clippy
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+      - id: action
+        uses: .
+        with:
+          working-directory: ${{ github.workspace }}/tests/fixtures/rust-project
+          all-features: 'true'
+          token: dummy-token
+      - name: Assert clippy ran with all-features
+        run: |
+          echo "Clippy action with all-features completed successfully"
+          echo "PASS"

@@ -1,14 +1,36 @@
-# auguwu/clippy-action
+# 🐻‍❄️📦 Clippy GitHub Action
 
-🐻‍❄️📦 GitHub action to run Clippy, an up-to-date and modern version of actions-rs/clippy
+> _GitHub action to run Clippy, an up-to-date and modern version of [actions-rs/clippy](https://github.com/actions-rs/clippy)_
 
-Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at [https://github.com/auguwu/clippy-action](https://github.com/auguwu/clippy-action).
+**clippy-action** is a modernized and up-to-date version of [actions-rs/clippy](https://github.com/actions-rs/clippy) that takes advantage of GitHub's new features related to actions, and keeps dependencies up to date as `actions-rs/clippy` has been unmaintained since 2020.
 
-## Versions
+## Usage
 
-| Version | Tag | Upstream commit |
-|---------|-----|-----------------|
-| 1.2.2 | [`1.2.2`](https://github.com/chainguard-actions/auguwu-clippy-action/tree/1.2.2) | [`aca33ee`](https://github.com/auguwu/clippy-action/commit/aca33ee853cd0f46f2b24a89f3d6f425f8dd0c7e) |
+```yaml
+jobs:
+    clippy:
+        name: Clippy
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - uses: dtolnay/rust-toolchain@stable
+              with:
+                  components: clippy
+            - uses: auguwu/clippy-action@1.2.1
+              with:
+                  token: ${{secrets.GITHUB_TOKEN}}
+```
+
+This action does allow writing check runs for Clippy results. To enable it, you will need to add this to your workflow:
+
+```yaml
+permissions:
+    checks: write
+```
+
+## License
+
+**clippy-action** is released under the [Apache 2.0](https://github.com/auguwu/clippy-action/blob/master/LICENSE) License with love by [Noel](https://floofy.dev)!
 
 ## Privacy
 
