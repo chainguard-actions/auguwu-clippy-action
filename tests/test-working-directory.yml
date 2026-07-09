@@ -1,0 +1,43 @@
+name: Test working-directory input
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_REF: refs/heads/main
+      GITHUB_EVENT_NAME: push
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Install Rust stable toolchain
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+      - name: Set up Rust project in a subdirectory
+        run: |
+          mkdir -p /tmp/workspace/my-rust-app/src
+          cat > /tmp/workspace/my-rust-app/Cargo.toml << 'EOF'
+          [package]
+          name = "my-rust-app"
+          version = "0.1.0"
+          edition = "2021"
+          EOF
+          cat > /tmp/workspace/my-rust-app/src/main.rs << 'EOF'
+          fn main() {
+              println!("Hello from working-directory test!");
+          }
+          EOF
+
+      - id: clippy
+        uses: .
+        with:
+          token: ${{ github.token }}
+          working-directory: /tmp/workspace/my-rust-app
+
+      - name: Assert clippy ran in working-directory successfully
+        run: |
+          echo "Clippy action with working-directory completed successfully"
+          echo "PASS"

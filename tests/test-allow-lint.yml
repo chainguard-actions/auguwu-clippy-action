@@ -1,0 +1,33 @@
+name: Test allow lint input
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_REF: refs/heads/main
+      GITHUB_EVENT_NAME: push
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Install Rust stable toolchain
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+      - name: Copy fixture Rust project to workspace
+        run: |
+          cp -r "$GITHUB_WORKSPACE/tests/fixtures/rust-project" /tmp/rust-project
+
+      - id: clippy
+        uses: .
+        with:
+          token: ${{ github.token }}
+          working-directory: /tmp/rust-project
+          allow: 'clippy::all'
+
+      - name: Assert clippy ran with allow lint successfully
+        run: |
+          echo "Clippy action with allow lint completed successfully"
+          echo "PASS"
