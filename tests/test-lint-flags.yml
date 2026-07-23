@@ -1,4 +1,4 @@
-name: Test working-directory input
+name: Test lint flag inputs (allow/deny/warn)
 on:
   workflow_dispatch:
 jobs:
@@ -12,18 +12,19 @@ jobs:
           curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable --component clippy
           echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
 
-      - name: Set up Rust project in a subdirectory
+      - name: Copy fixture Rust project to workspace
         run: |
-          mkdir -p /tmp/subdir-project
-          cp -r "$GITHUB_WORKSPACE/tests/fixtures/rust-project/." /tmp/subdir-project/
+          cp -r "$GITHUB_WORKSPACE/tests/fixtures/rust-project" /tmp/rust-project-lint
 
       - id: action
         uses: .
         with:
           token: ${{ github.token }}
-          working-directory: /tmp/subdir-project
+          working-directory: /tmp/rust-project-lint
+          allow: 'dead_code'
+          warn: 'unused_variables'
 
-      - name: Assert clippy ran in working-directory successfully
+      - name: Assert clippy ran with lint flags successfully
         run: |
-          echo "Clippy action with working-directory completed without error"
+          echo "Clippy action with allow/warn lint flags completed without error"
           echo "PASS"

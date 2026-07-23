@@ -1,33 +1,29 @@
 name: Test all-features input
 on:
   workflow_dispatch:
-
 jobs:
   test:
     runs-on: ubuntu-latest
-    env:
-      GITHUB_REF: refs/heads/main
-      GITHUB_EVENT_NAME: push
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Install Rust stable toolchain
         run: |
-          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
-          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable --component clippy
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
 
       - name: Copy fixture Rust project to workspace
         run: |
-          cp -r "$GITHUB_WORKSPACE/tests/fixtures/rust-project" /tmp/rust-project
+          cp -r "$GITHUB_WORKSPACE/tests/fixtures/rust-project" /tmp/rust-project-features
 
-      - id: clippy
+      - id: action
         uses: .
         with:
           token: ${{ github.token }}
-          working-directory: /tmp/rust-project
+          working-directory: /tmp/rust-project-features
           all-features: 'true'
 
       - name: Assert clippy ran with all-features successfully
         run: |
-          echo "Clippy action with all-features completed successfully"
+          echo "Clippy action with all-features=true completed without error"
           echo "PASS"
