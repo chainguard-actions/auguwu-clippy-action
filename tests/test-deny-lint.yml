@@ -1,4 +1,4 @@
-name: Test all-features flag
+name: Test deny lint input
 on:
   workflow_dispatch:
 jobs:
@@ -12,15 +12,15 @@ jobs:
           curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
           echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
 
-      - name: Run clippy-action with all-features enabled
+      - name: Run clippy-action with deny lint
         id: clippy
         uses: .
         with:
           token: ${{ github.token }}
           working-directory: ${{ github.workspace }}/tests/fixtures/rust-project
-          all-features: 'true'
+          deny: clippy::unwrap_used
 
-      - name: Assert clippy ran successfully with all-features
+      - name: Assert clippy ran successfully with deny lints
         run: |
-          echo "Clippy action with all-features completed successfully"
+          echo "Clippy action with deny lints completed successfully"
           echo "PASS"

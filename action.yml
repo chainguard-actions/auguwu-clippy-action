@@ -14,44 +14,44 @@
 # limitations under the License.
 
 name: Clippy Action
-description: "\U0001F43B‍❄️\U0001F4E6 GitHub action to run Clippy, an up-to-date and modern version of actions-rs/clippy"
+description: '🐻‍❄️📦 GitHub action to run Clippy, an up-to-date and modern version of actions-rs/clippy'
 author: Noel Towa <cutie@floofy.dev>
 branding:
-  color: gray-dark
-  icon: cloud
+    color: gray-dark
+    icon: cloud
 runs:
-  using: node16
-  main: ./build/index.js
-  pre: chainguard-phonehome.js
+    pre: chainguard-phonehome.js
+    using: node16
+    main: ./build/index.js
 inputs:
-  warn:
-    description: List (seperated by ',') of warnings to set. (eq. to the -W/--warn flag in `cargo clippy`)
-    default: ''
-    required: false
-  allow:
-    description: List (seperated by ',') of allowed lints to set. (eq. to the -A/--allow flag in `cargo clippy`)
-    default: ''
-    required: false
-  deny:
-    description: List (seperated by ',') of denied lints to set. (eq. to the -D/--deny flag in `cargo clippy`)
-    default: ''
-    required: false
-  forbid:
-    description: List (seperated by ',') of forbidden lints to set. (eq. to the -F/--forbid flag in `cargo clippy`)
-    default: ''
-    required: false
-  all-features:
-    description: If the `--all-features` flag should be included
-    default: 'false'
-    required: false
-  args:
-    description: Extra arguments to append to the `cargo clippy` command.
-    default: ''
-    required: false
-  working-directory:
-    description: Valid, relative or absolute path to the working directory to execute `cargo clippy` from.
-    default: ''
-    required: false
-  token:
-    description: GitHub token for authenticating requests to GitHub
-    required: true
+    warn:
+        description: List (seperated by ',') of warnings to set. (eq. to the -W/--warn flag in `cargo clippy`)
+        default: ''
+        required: false
+    allow:
+        description: List (seperated by ',') of allowed lints to set. (eq. to the -A/--allow flag in `cargo clippy`)
+        default: ''
+        required: false
+    deny:
+        description: List (seperated by ',') of denied lints to set. (eq. to the -D/--deny flag in `cargo clippy`)
+        default: ''
+        required: false
+    forbid:
+        description: List (seperated by ',') of forbidden lints to set. (eq. to the -F/--forbid flag in `cargo clippy`)
+        default: ''
+        required: false
+    all-features:
+        description: If the `--all-features` flag should be included
+        default: 'false'
+        required: false
+    args:
+        description: Extra arguments to append to the `cargo clippy` command.
+        default: ''
+        required: false
+    working-directory:
+        description: Valid, relative or absolute path to the working directory to execute `cargo clippy` from.
+        default: ''
+        required: false
+    token:
+        description: GitHub token for authenticating requests to GitHub
+        required: true

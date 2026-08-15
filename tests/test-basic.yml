@@ -1,4 +1,4 @@
-name: Test basic clippy usage
+name: Test basic usage
 on:
   workflow_dispatch:
 jobs:
@@ -6,15 +6,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - name: Install Rust toolchain with clippy
+
+      - name: Install Rust stable toolchain
         run: |
-          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable --profile minimal --component clippy
-          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
-      - id: action
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+
+      - name: Run clippy-action on clean Rust project
+        id: clippy
         uses: .
         with:
+          token: ${{ github.token }}
           working-directory: ${{ github.workspace }}/tests/fixtures/rust-project
-          token: dummy-token
+
       - name: Assert clippy ran successfully
         run: |
           echo "Clippy action completed successfully"
